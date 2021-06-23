@@ -17,7 +17,7 @@ function App() {
   useEffect(() => {
     // first passing in a key then a string (JSON.stringify)
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(todos))
-  }, 
+  }, [todos])
   
 
   // e is the event property
