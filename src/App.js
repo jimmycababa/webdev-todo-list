@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import TodoList from './TodoList';
 
 // setting a key for local storage.setItem()
-const LOCAL_STORAGE_KEY = 'todosApp.todos'
+const LOCAL_STORAGE_KEY = 'todoApp.todos'
 
 
 function App() {
@@ -12,6 +12,12 @@ function App() {
   
   const [todos, setTodos] = useState([])
   const todoNameRef = useRef()
+
+  // we only want to call this function once (when something changes)
+  useEffect(() => {
+    const storedTodos = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY))
+    if(storedTodos) setTodos(storedTodos)
+  }, [])
 
   // storing our todo items inside of local storage using the hook useEffect. it is a function that will take a function for its first parameter and where we want to do things. every time something changes we want to call this first function, and how we determine when we call the function is we pass in an array of properties [todos]. so anytime we update our todos, we want to save our todos to localStorage
   useEffect(() => {
