@@ -14,6 +14,8 @@ function App() {
   const todoNameRef = useRef()
 
   // we only want to call this function once (when something changes)
+  // this will allow to load the todos on a refresh. saving them if you will
+  // if we have stored todos, then set our todos to storedTodos
   useEffect(() => {
     const storedTodos = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY))
     if(storedTodos) setTodos(storedTodos)
@@ -25,6 +27,15 @@ function App() {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(todos))
   }, [todos])
   
+  // a way to toggle the check box for complete/not complete
+  // ...todos is a new list of todos (a copy) since we can't alter the inputs of a state variable. so we make a copy and make changes to the copy to set the new state.
+  // const todo is getting the todo that we want to modify. we are finding the todo that has the id that we passed into toggleTodo
+  function toggleTodo(id) {
+    const newTodos = [...todos]
+    const todo = newTodos.find(todo => todo.id === id)
+    todo.complete = !todo.complete
+    setTodos(newTodos)
+  }
 
   // e is the event property
   function handleAddTodo(e) {
@@ -40,18 +51,25 @@ function App() {
     todoNameRef.current.value = null
 
   }
+
+  // this function will set our todos to the new list that doesnt have any of our complete ones
+  function handleClearTodos() {
+    const newTodos = todos.filter(todo => !todo.complete)
+    setTodos(newTodos)
+  }
   
   return (
     // the JSX allows us to embed components inside other components
     <div>
       {/* passing the prop todos from TodoList and we want to pass the todos variable to that prop (todos) */}
-    <TodoList todos={todos}/>
+    <TodoList todos={todos} toggleTodo={toggleTodo} />
     {/* input for user to add new todos. ref is creating a variable todoNameRef */}
     <input ref={todoNameRef} type="text" />
     {/* set up an onclick listener for adding todos and we set it equal to a function (handleAddTodo) */}
     <button onClick={handleAddTodo}>Add Todo</button>
-    <button>Clear Completed</button>
-    <div>0 left to do</div>
+   {/* setting up button to clear the todos */}
+    <button onClick={handleClearTodos}>Clear Completed</button>
+    <div>{todos.filter(todo => !todo.complete).length} 0 left to do</div>
     </div>
   )
 }
